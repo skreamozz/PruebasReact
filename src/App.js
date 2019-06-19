@@ -1,26 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
+import React,{useState} from 'react';
+import { BrowserRouter as Router } from "react-router-dom";
+
 import './App.css';
 
+import Contenido from './Componentes/Contenido';
+import Header from './Componentes/Header';
+
 function App() {
+  const [state, setState] = useState(0);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="continer">
+
+      <div className='column text-center'>
+        <Router>
+          <Header state ={state}/>
+          <Contenido setState ={setState} />
+          <Foother />
+        </Router>
+      </div>
     </div>
   );
 }
+
+
+
+
+
+
+
+
+const Foother = () => <h6>Hecho Por maxi - Copyright</h6>
 
 export default App;
