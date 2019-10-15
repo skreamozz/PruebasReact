@@ -1,20 +1,27 @@
-import React, {useState,useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import Tabla from './Tabla';
 import Loading from './Loading';
 
 
 
-const About = (props) =>{
-    const [Users, setUsers] = useState(null);
-    const setState = props.setState;
+const About = ({ setState }) => {
+  const [Users, setUsers] = useState(null);
   useEffect(() => {
-    const abortController = new AbortController();
-    const signal = abortController.signal;
-    fetch('https://jsonplaceholder.typicode.com/users', { signal })
-      .then((resp) => { return resp.json(); }).then((data) =>{setState(data.length); setUsers(data)});
+    
+     const fectchData = async () => {
+      try {
+        const resp = await fetch('https://jsonplaceholder.typicode.com/todos');
+        const data = await resp.json();
+        await setState(data.length);
+        await setUsers(data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
-    return () => abortController.abort();
-  });
+    fectchData();
+
+  }, [setState]);
 
   if (typeof Users === 'undefined' || Users == null || Object.entries(Users).length === 0) {
     return <Loading />

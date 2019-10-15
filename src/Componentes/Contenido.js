@@ -2,17 +2,20 @@ import React from 'react';
 import About from './About';
 import Home from './Home';
 import Productos from './Productos';
+import Cuentas from './Cuentas';
 import { Switch, Route } from 'react-router-dom';
 
 
-function Contenido(props) {
-  const setState = props.setState;
+
+function Contenido({setState}) {
+  
   return (
     
     <Switch>
       <Route exact path='/' component={Home} />
       <Route path='/About' render={() => <About setState={setState} />} />
       <Route path='/Productos' component={Productos} />
+      <Route path= '/Cuentas' component= {Cuentas} />
       <Route component={Error} />
 
     </Switch>

@@ -1,32 +1,83 @@
-import React, {useState} from 'react';
+import React, { useReducer } from 'react';
+import Form from './Form';
+import Tabla from './Tabla';
 
+const ProductosReducer = (state, action) => {
+    switch (action.key) {
+        case 'input': {
+            
+            return {
+                ...state,
+                [action.field]: action.Value,
+            }
+        }
+        case 'Modificar':
+            if(!state.codigo & !state.descripcion){
+                return state;
+            }else if(!state.codigo){
+                let cambio = state.Items;
+                cambio[action.id] = { codigo: state.Items[action.id].codigo,descripcion:state.descripcion};
+                return {codigo:'',descripcion:'', Items:[...cambio]};
+            }else if(!state.descripcion){
+                let cambio = state.Items;
+                cambio[action.id] = { codigo: state.codigo,descripcion:state.Items[action.id].descripcion};
+                return {codigo:'',descripcion:'', Items:[...cambio]};
+            }
 
+            let cambio = state.Items;
+            cambio[action.id] = { codigo: state.codigo,descripcion:state.descripcion};
+            return {...state, Items:[...cambio]};
 
-const submit = (e,setSt)=>{
-    e.preventDefault();
-    const {input} = e.target;
-    setSt(input.value);
+        case 'Add': {
+            if(!state.codigo || !state.descripcion){
+                return state;
+            }
+            if (!state.Items[0].codigo | !state.Items[0].descripcion) {
+                return { codigo:'',descripcion:'', Items:[{ codigo: state.codigo, descripcion: state.descripcion }]};
+            } else {
+                return { Items: [...state.Items, { codigo: state.codigo, descripcion: state.descripcion }], codigo: '', descripcion: '' };
+            }
+        }
+        case 'Eliminar':
+            {
+                let cambio = state.Items;
+                cambio.splice(action.payload, 1);
+
+                if (cambio.length === 0) {
+                    return {
+                        ...state,
+                        Items: [{ codigo: '', descripcion: '' }]
+                    }
+                } else {
+                    return { ...state, Items: [...cambio] }
+                }
+            }
+        default:
+            {
+                return state;
+            }
+    }
 
 }
 
-const Productos = () => {
-    const [st,setSt] = useState('');
 
-    
+
+const Productos = () => {
+    const [state, dispatch] = useReducer(ProductosReducer, { Items: [{ codigo: '', descripcion: '' }], codigo: '', descripcion: '' });
+    const submit =(e) => {
+        e.preventDefault();
+        dispatch({ key: 'Add' });
+    }
+
     return (
-        <div>
-            <div className='jumbotron'>
-                <p>{st}</p>
-                <form className='d-flex justify-content-center col-lg-12' onSubmit={(e) =>{ submit(e,setSt)} }>
-                <div className= 'form-group'>
-                    <input name ='input' className='form-control' type ='text' placeholder='Codigo' />
-                </div>
-                <div className='form-group'>
-                    <input type='submit' className='btn btn-info btn-block' value='Enviar'/>
-                </div>
-            </form>
+        <>
+            <div className='jumbotron d-flex justify-content-center'>
+                <Form submit={submit} state={state} dispatch={dispatch} />
             </div>
-        </div>
+            <div>{ state.Items[0].codigo ? <Tabla user={state.Items} Abm={true} Eliminar={dispatch} />: null}</div>
+            
+        </>
+
 
     );
 }
